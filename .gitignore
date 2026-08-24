@@ -1,0 +1,3 @@
+simd/matmul_avx2
+simd/matmul_scalar
+simd/*.o
