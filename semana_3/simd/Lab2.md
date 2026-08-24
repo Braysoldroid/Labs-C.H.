@@ -2,10 +2,10 @@
 
 ## 1. Contexto general
 
-- **Curso:** [Computación Heterogénea]
-- **Laboratorio:** [2/Comprensión de instrucciones SIMD en el rendimiento de un programa]
-- **Estudiante:** [Brayan Solís Rojas]
-- **Profesor:** [Luis León Vega]
+- **Curso:** Computación Heterogénea
+- **Laboratorio:** 2/Comprensión de instrucciones SIMD en el rendimiento de un programa
+- **Estudiante:** Brayan Solís Rojas
+- **Profesor:** Luis León Vega
 
 ### Objetivo
 
@@ -41,3 +41,5 @@ Comprender mediante el ejercicio práctico, los efectos de utilizar instruccione
   por instrucción, frente a 1 float por instrucción en la versión escalar).
 - **Speedup real obtenido:** `Aproximadamente 3x`
 - **Discusión:** La ley de Amdahl dice que el speedup total está limitado por la fracción del programa que no se beneficia de la aceleracion. En el código de matmul_avx2.c hay funciones puramente escalares como por ejemplo, transpose_matrix_1024. Y, aunque simd_reduce_add_ps es código vectorizado, este se ejecuta a través de una cadena de dependiencias secuenciales que impiden el paralelismo pleno por latencia de instrucciones dependientes. Otro problema puede ser que el procesador espera datos de RAM, por lo que el tamaño de las matrices y de las caché de mi PC pueden generar limitantes aparte de las que indica Amdahl. 
+
+**Repositorio completo:** https://github.com/Braysoldroid/Labs-C.H.
