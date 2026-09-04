@@ -114,12 +114,52 @@
 
 ### Ejercicio A — Biblioteca estática (`libraries/`)
 
+```
+./libraries/build/bin/bench-static 1000000 1000 1.0 2.0
+```
+
+| Métrica | Valor |
+|---|---:|
+| Fill A (µs/iter) | 1567.805 |
+| Fill B (µs/iter) | 1373.647 |
+| Add (µs/iter) | 2400.032 |
+| Total (µs) | 5341483.949 |
+| Total (s) | 5.34 |
+
+Archivo generado: `libvectorops.a` — 1.8K
+
 ### Ejercicio B — Biblioteca dinámica (`libraries/`)
+
+```
+./libraries/build/bin/bench-dynamic 1000000 1000 1.0 2.0
+```
+
+| Métrica | Valor |
+|---|---:|
+| Fill A (µs/iter) | 3667.843 |
+| Fill B (µs/iter) | 3574.164 |
+| Add (µs/iter) | 3173.226 |
+| Total (µs) | 10415232.842 |
+| Total (s) | 10.42 |
+
+Archivo generado: `libvectorops.so` — 16K
 
 ### Ejercicio C — Funciones static inline (`libraries/`)
 
-## Resumen comparativo estático / dinámico / inline
+```
+./libraries/build/bin/bench-inline 1000000 1000 1.0 2.0
+```
+
+| Métrica | Valor |
+|---|---:|
+| Fill A (µs/iter) | 1709.678 |
+| Fill B (µs/iter) | 1387.065 |
+| Add (µs/iter) | 2320.882 |
+| Total (µs) | 5417625.606 |
+| Total (s) | 5.42 |
+
+---
 
 ## Conclusiones generales
 
-`[completar]`
+Repositorio completo: https://github.com/Braysoldroid/Labs-C.H.
