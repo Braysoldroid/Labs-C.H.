@@ -14,8 +14,6 @@
 | Arquitectura | x86_64, AuthenticAMD |
 | NUMA | 1 nodo (0-15) |
 
-**Nota importante para el análisis:** el equipo tiene 16 hilos lógicos pero solo 8 núcleos físicos. Esto implica que, a partir del hilo 9, dos hilos empiezan a compartir el mismo núcleo físico (SMT), lo cual introduce un cambio de régimen visible en varios de los resultados de escalabilidad presentados abajo.
-
 ---
 
 ## Práctica Clase 3
@@ -64,13 +62,6 @@
 | 15    | 10.06             | 0.49              | 0.03                    |
 | 16    | 10.76             | 0.46              | 0.03                    |
 
-#### Análisis
-
-- **Escalabilidad:** ambos programas mejoran hasta 3-4 hilos (speedup máximo ~1.87x en affinity, ~1.73x en naive) y luego degradan progresivamente hasta quedar por debajo del baseline secuencial (speedup < 1.0) a partir de 7-8 hilos. `[completar redacción propia si se desea ampliar]`
-- **Fracción de código paralelo (Ley de Amdahl):** usando el speedup máximo observado en cpu-affinity (1.87x con n=4) y despejando `p` de `Speedup = 1 / ((1-p) + p/n)`: `[completar cálculo]`
-- **Eficiencia:** cae drásticamente desde 1.0 (n=1) hasta ~0.03-0.05 con 16 hilos en ambos casos, señal de que la mayor parte del "trabajo" adicional con muchos hilos es overhead/contención, no cómputo útil.
-- **cpu-affinity vs cpu-naive:** naive es consistentemente peor a partir de 7-8 hilos (10.76s vs 9.00s con 16 hilos). La diferencia clave es que `cpu-naive` inicializa toda la memoria secuencialmente en `main()` antes de crear los hilos, mientras que `cpu-affinity` inicializa la memoria de cada hilo en paralelo dentro de `worker()`. Esa porción secuencial de `cpu-naive` crece con el número de hilos (más memoria total a inicializar antes de arrancar), penalizando su escalabilidad — ejemplo concreto de la Ley de Amdahl en la práctica.
-
 ---
 
 ### Ejercicio B — matmul tiled / softmax OpenMP (`scaling/`)
@@ -116,13 +107,6 @@
 | 14 | 0.843992 | 1.70 | 0.12 |
 | 15 | 0.925473 | 1.52 | 0.10 |
 | 16 | 1.008894 | 1.42 | 0.09 |
-
-#### Análisis
-
-- **Escalabilidad de matmul_tiled:** excelente hasta 8 hilos, con eficiencia sostenida por encima de 0.97 (casi ideal) y speedup casi lineal (7.78x con 8 hilos). Justo en el salto de 8 a 9 hilos la eficiencia cae de golpe a la mitad (0.97 → 0.51) — coincide exactamente con el límite de núcleos físicos (8) del equipo. A partir de ahí, cada hilo adicional comparte núcleo físico vía SMT con otro ya ocupado, por lo que el rendimiento por hilo se reduce drásticamente en vez de seguir sumando cómputo real.
-- **Escalabilidad de softmax:** mucho más pobre desde el inicio — speedup máximo de solo 2.56x (con 5 hilos) y cae progresivamente después. Esto se debe al tamaño pequeño del problema (1000 elementos): el overhead de crear/sincronizar hilos en cada una de las 100,000 repeticiones domina sobre el cómputo real por hilo (grano fino vs grano grueso de paralelismo).
-- **Fracción de código paralelo (Amdahl):** matmul_tiled ≈ `[completar cálculo con speedup=7.78, n=8]`; softmax ≈ `[completar cálculo con speedup=2.56, n=5]`. La diferencia numérica entre ambos cuantifica justo la diferencia de "grano" del paralelismo mencionada arriba.
-- **Comparación con el Ejercicio A:** matmul_tiled escala notablemente mejor que threading (cpu-affinity/cpu-naive) porque tiene mucho más cómputo por hilo (multiplicación de matrices en bloques) y OpenMP con `collapse(2)` + `schedule(static)` reparte el trabajo de forma más eficiente que la asignación manual de CPU en threading. softmax, en cambio, escala peor que threading debido a su tamaño de problema pequeño.
 
 ---
 
